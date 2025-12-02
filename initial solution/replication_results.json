@@ -1,0 +1,330 @@
+{
+  "num_replications": 50,
+  "num_unique": 2,
+  "num_duplicates": 48,
+  "patient_list": [
+    {
+      "arrival_time": 15.300904309122016,
+      "pid": 1,
+      "surgery_type": "adenotonsillectomy"
+    },
+    {
+      "arrival_time": 35.59672872446514,
+      "pid": 2,
+      "surgery_type": "thyroidectomy"
+    },
+    {
+      "arrival_time": 39.38552150951684,
+      "pid": 3,
+      "surgery_type": "microlaryngoscopy"
+    },
+    {
+      "arrival_time": 56.32311664149573,
+      "pid": 4,
+      "surgery_type": "endoscopic sinus"
+    },
+    {
+      "arrival_time": 57.68740271059422,
+      "pid": 5,
+      "surgery_type": "modified radical mastoidectomy"
+    },
+    {
+      "arrival_time": 58.17188339412496,
+      "pid": 6,
+      "surgery_type": "microlaryngoscopy"
+    },
+    {
+      "arrival_time": 61.87263383352233,
+      "pid": 7,
+      "surgery_type": "endoscopic sinus"
+    },
+    {
+      "arrival_time": 75.69288882431455,
+      "pid": 8,
+      "surgery_type": "endoscopic sinus"
+    },
+    {
+      "arrival_time": 79.01826386176975,
+      "pid": 9,
+      "surgery_type": "endoscopic sinus"
+    },
+    {
+      "arrival_time": 87.17675820772864,
+      "pid": 10,
+      "surgery_type": "rhinoplasty"
+    },
+    {
+      "arrival_time": 100.52388880225509,
+      "pid": 11,
+      "surgery_type": "adenotonsillectomy"
+    },
+    {
+      "arrival_time": 121.85627917602497,
+      "pid": 12,
+      "surgery_type": "septoplasty"
+    },
+    {
+      "arrival_time": 139.82312829062724,
+      "pid": 13,
+      "surgery_type": "excision of the lymphadenopathy from the lumbar"
+    },
+    {
+      "arrival_time": 144.7064076731349,
+      "pid": 14,
+      "surgery_type": "thyroidectomy"
+    },
+    {
+      "arrival_time": 191.97924739970946,
+      "pid": 15,
+      "surgery_type": "excision of the lymphadenopathy from the lumbar"
+    },
+    {
+      "arrival_time": 193.59653838523647,
+      "pid": 16,
+      "surgery_type": "modified radical mastoidectomy"
+    },
+    {
+      "arrival_time": 195.12231866017095,
+      "pid": 17,
+      "surgery_type": "excision of the lymphadenopathy from the lumbar"
+    },
+    {
+      "arrival_time": 209.00706066451116,
+      "pid": 18,
+      "surgery_type": "adenotonsillectomy"
+    },
+    {
+      "arrival_time": 228.63216712120516,
+      "pid": 19,
+      "surgery_type": "endoscopic sinus"
+    },
+    {
+      "arrival_time": 230.63215824118657,
+      "pid": 20,
+      "surgery_type": "modified radical mastoidectomy"
+    },
+    {
+      "arrival_time": 231.86333313205415,
+      "pid": 21,
+      "surgery_type": "buccal mucosa bioppsy"
+    },
+    {
+      "arrival_time": 258.3902479008367,
+      "pid": 22,
+      "surgery_type": "sleep apnea diagnosis test"
+    },
+    {
+      "arrival_time": 290.8916348412263,
+      "pid": 23,
+      "surgery_type": "excision of the lymphadenopathy from the lumbar"
+    },
+    {
+      "arrival_time": 303.80987396145895,
+      "pid": 24,
+      "surgery_type": "microlaryngoscopy"
+    },
+    {
+      "arrival_time": 304.5134870653123,
+      "pid": 25,
+      "surgery_type": "thyroidectomy"
+    },
+    {
+      "arrival_time": 326.7600825788886,
+      "pid": 26,
+      "surgery_type": "microlaryngoscopy"
+    },
+    {
+      "arrival_time": 355.75830938072716,
+      "pid": 27,
+      "surgery_type": "microlaryngoscopy"
+    },
+    {
+      "arrival_time": 362.93190053737,
+      "pid": 28,
+      "surgery_type": "rhinoplasty"
+    },
+    {
+      "arrival_time": 378.07792367038724,
+      "pid": 29,
+      "surgery_type": "excision of the lymphadenopathy from the lumbar"
+    },
+    {
+      "arrival_time": 380.74069410263695,
+      "pid": 30,
+      "surgery_type": "excision of the lymphadenopathy from the lumbar"
+    },
+    {
+      "arrival_time": 384.26717184944306,
+      "pid": 31,
+      "surgery_type": "buccal mucosa bioppsy"
+    },
+    {
+      "arrival_time": 402.41805683776994,
+      "pid": 32,
+      "surgery_type": "microlaryngoscopy"
+    },
+    {
+      "arrival_time": 416.508799257714,
+      "pid": 33,
+      "surgery_type": "septoplasty"
+    },
+    {
+      "arrival_time": 427.9668470859377,
+      "pid": 34,
+      "surgery_type": "thyroidectomy"
+    },
+    {
+      "arrival_time": 430.64303009805684,
+      "pid": 35,
+      "surgery_type": "modified radical mastoidectomy"
+    },
+    {
+      "arrival_time": 435.36261925658255,
+      "pid": 36,
+      "surgery_type": "endoscopic sinus"
+    },
+    {
+      "arrival_time": 439.08214097046834,
+      "pid": 37,
+      "surgery_type": "excision of the lymphadenopathy from the lumbar"
+    },
+    {
+      "arrival_time": 466.8406419901809,
+      "pid": 38,
+      "surgery_type": "adenotonsillectomy"
+    },
+    {
+      "arrival_time": 470.7425808528407,
+      "pid": 39,
+      "surgery_type": "adenotonsillectomy"
+    }
+  ],
+  "unique_results": [
+    {
+      "replication": 1,
+      "stats": {
+        "arrived_urgent": 39,
+        "arrived_elective": 3,
+        "served_urgent": 1,
+        "served_elective": 3,
+        "rejected_no_skill": 3,
+        "rejected_wait_timeout": 35,
+        "rejected_shift_ended": 0,
+        "total_surgeries": 4
+      },
+      "schedule": [
+        {
+          "patient": "U001",
+          "type": "URGENT",
+          "surgery_type": "adenotonsillectomy",
+          "arrival": 15.300904309122016,
+          "start": 15.300904309122016,
+          "end": 90.30090430912202,
+          "wait": 0.0,
+          "main": "S3",
+          "assist1": "S1",
+          "assist2": "S2"
+        },
+        {
+          "patient": "E01",
+          "type": "ELECTIVE",
+          "surgery_type": "thyroidectomy",
+          "arrival": 60,
+          "start": 90.30090430912202,
+          "end": 265.300904309122,
+          "wait": 30.300904309122018,
+          "main": "S6",
+          "assist1": "S3",
+          "assist2": "S4"
+        },
+        {
+          "patient": "E02",
+          "type": "ELECTIVE",
+          "surgery_type": "septoplasty",
+          "arrival": 90,
+          "start": 265.300904309122,
+          "end": 370.300904309122,
+          "wait": 175.30090430912202,
+          "main": "S2",
+          "assist1": "S1",
+          "assist2": "S3"
+        },
+        {
+          "patient": "E03",
+          "type": "ELECTIVE",
+          "surgery_type": "rhinoplasty",
+          "arrival": 180,
+          "start": 370.300904309122,
+          "end": 475.300904309122,
+          "wait": 190.30090430912202,
+          "main": "S5",
+          "assist1": "S3",
+          "assist2": "S4"
+        }
+      ]
+    },
+    {
+      "replication": 3,
+      "stats": {
+        "arrived_urgent": 39,
+        "arrived_elective": 3,
+        "served_urgent": 1,
+        "served_elective": 3,
+        "rejected_no_skill": 3,
+        "rejected_wait_timeout": 35,
+        "rejected_shift_ended": 0,
+        "total_surgeries": 4
+      },
+      "schedule": [
+        {
+          "patient": "U001",
+          "type": "URGENT",
+          "surgery_type": "adenotonsillectomy",
+          "arrival": 15.300904309122016,
+          "start": 15.300904309122016,
+          "end": 90.30090430912202,
+          "wait": 0.0,
+          "main": "S3",
+          "assist1": "S2",
+          "assist2": "S1"
+        },
+        {
+          "patient": "E01",
+          "type": "ELECTIVE",
+          "surgery_type": "thyroidectomy",
+          "arrival": 60,
+          "start": 90.30090430912202,
+          "end": 265.300904309122,
+          "wait": 30.300904309122018,
+          "main": "S6",
+          "assist1": "S3",
+          "assist2": "S4"
+        },
+        {
+          "patient": "E02",
+          "type": "ELECTIVE",
+          "surgery_type": "septoplasty",
+          "arrival": 90,
+          "start": 265.300904309122,
+          "end": 370.300904309122,
+          "wait": 175.30090430912202,
+          "main": "S2",
+          "assist1": "S1",
+          "assist2": "S3"
+        },
+        {
+          "patient": "E03",
+          "type": "ELECTIVE",
+          "surgery_type": "rhinoplasty",
+          "arrival": 180,
+          "start": 370.300904309122,
+          "end": 475.300904309122,
+          "wait": 190.30090430912202,
+          "main": "S5",
+          "assist1": "S3",
+          "assist2": "S4"
+        }
+      ]
+    }
+  ]
+}
