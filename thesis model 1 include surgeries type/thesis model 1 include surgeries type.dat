@@ -1,0 +1,98 @@
+/*********************************************
+ * OPL 12.9.0.0 Data
+ * Cleaned Version
+ *********************************************/
+
+// 1. SET OF PATIENTS (P)
+P = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+// 2. SET OF SURGEONS (S)
+S = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+// 3. DAILY WORKING HOURS (wh)
+wh = 480;
+
+// 4. SET OF SURGERY TYPES
+SurgeryTypes = {"Adeno", "Micro", "Buccal", "Excision", "Septo", "Modified", "Thyroi", "Rhino", "Endos", "Sleep"};
+
+// ============================================================================
+// SURGEON SKILL SETS
+// ============================================================================
+
+// 4.1 Surgeons qualified to be RESPONSIBLE SURGEON
+S_Responsible = [
+  Adeno= {3, 4},
+  Micro= {3, 4},
+  Buccal= {3, 4},
+  Excision= {3, 4},
+  Septo= {3, 4},
+  Modified= {6},
+  Thyroi= {6},
+  Rhino= {5},
+  Endos= {5},
+  Sleep={1, 2}
+];
+
+// 4.2 Surgeons qualified to be 1ST ASSISTANT
+S_Assistant1 = [
+  Adeno= {1, 2},
+  Micro= {1, 2},
+  Buccal= {1, 2},
+  Excision={1, 2},
+  Septo= {1, 2},
+  Modified= {3, 4},
+  Thyroi= {3, 4},
+  Rhino= {3, 4},
+  Endos= {1, 2},
+  Sleep= {1, 2}
+];
+
+// 4.3 Surgeons qualified to be 2ND ASSISTANT (for ALL types)
+S_Assistant2 = {7, 8, 9, 10};
+
+// ============================================================================
+
+// 5. DURATION FOR EACH SURGERY TYPE
+DurationByType = [
+  Adeno= 60,
+  Micro= 65,
+  Buccal= 30,
+  Excision= 30,
+  Septo= 90,
+  Modified= 100,
+  Thyroi= 160,
+  Rhino= 90,
+  Endos= 65,
+  Sleep= 30
+];
+
+// 6. PATIENT TO SURGERY TYPE MAPPING
+PatientType = [
+  1= "Adeno", 
+  2= "Micro", 
+  3= "Buccal", 
+  4= "Excision", 
+  5= "Septo", 
+  6= "Modified", 
+  7= "Thyroi",
+  8= "Rhino", 
+  9="Endos", 
+  10= "Sleep"
+];
+
+// 7. RESTING TIME FOR EACH SURGERY TYPE
+RestingTimeByType = [
+  Adeno= 15,
+  Micro= 15,
+  Buccal= 15,
+  Excision= 15,
+  Septo= 15,
+  Modified= 30,
+  Thyroi= 30,
+  Rhino= 20,
+  Endos= 20,
+  Sleep= 10
+];
+
+// 8. BIG M VALUE
+// BigM = 20000;

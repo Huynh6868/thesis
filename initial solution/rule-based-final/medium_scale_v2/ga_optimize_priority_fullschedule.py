@@ -192,6 +192,7 @@ def build_elective_plan(
     rest_time: Union[int, Dict[str, int]],
     max_reschedule_weeks: int = 1,
     time_step: int = 5,
+    frozen_overrides: Optional[PlannerOverrides] = None,  # NEW: frozen cases from previous schedule
 ) -> PlannerOverrides:
     """
     Convert GA chromosome to feasible elective-only schedule.
@@ -206,6 +207,11 @@ def build_elective_plan(
       - Check: admin hours, room availability, surgeon availability, on-duty
       - First feasible slot → commit
       - No slot within horizon → mark delayed beyond time_limit
+    
+    If frozen_overrides is provided:
+      - Frozen cases block room/surgeon calendars first
+      - Their schedule is copied to output unchanged
+      - Only non-frozen cases in priority_list are rescheduled
     
     Returns:
         PlannerOverrides with scheduled_start, room, team for each elective
@@ -228,6 +234,53 @@ def build_elective_plan(
     scheduled_start: Dict[int, int] = {}
     assigned_room: Dict[int, int] = {}
     assigned_team: Dict[int, Team] = {}
+    
+    # Helper to compute rest time for a case
+    def get_rest_val(stype: str) -> int:
+        if isinstance(rest_time, dict):
+            val = rest_time.get(stype, 30)
+            if isinstance(val, dict):
+                return max(val.values())
+            return int(val)
+        return int(rest_time)
+    
+    # =========================================================================
+    # STEP 1: Process frozen cases first (block their calendars)
+    # =========================================================================
+    if frozen_overrides:
+        for pid in frozen_overrides.scheduled_start_by_pid.keys():
+            if pid not in elective_cases:
+                continue  # Skip if case not in current set
+            
+            c = elective_cases[pid]
+            start = frozen_overrides.scheduled_start_by_pid[pid]
+            room = frozen_overrides.room_by_pid[pid]
+            team = frozen_overrides.team_by_pid[pid]
+            
+            # Copy frozen schedule to output
+            scheduled_start[pid] = start
+            assigned_room[pid] = room
+            assigned_team[pid] = team
+            
+            # Block calendars for frozen case
+            dur_room = c.duration + c.prep_time
+            dur_surg = c.duration + get_rest_val(c.surgery_type)
+            
+            if room in room_cal:
+                _insert(room_cal[room], start, start + dur_room)
+            
+            main, a1, a2 = team
+            ensure_surg(main)
+            ensure_surg(a1)
+            _insert(surg_cal[main], start, start + dur_surg)
+            _insert(surg_cal[a1], start, start + dur_surg)
+            if a2:
+                ensure_surg(a2)
+                _insert(surg_cal[a2], start, start + dur_surg)
+    
+    # =========================================================================
+    # STEP 2: Process modifiable cases in priority order
+    # =========================================================================
     
     # Process in priority order
     for pid in priority_list:
@@ -486,9 +539,13 @@ def evaluate_individual(
     max_reschedule_weeks: int,
     penalty_next_week: int,
     weights: Dict[str, float],
+    frozen_overrides: Optional[PlannerOverrides] = None,  # NEW: frozen cases from previous schedule
 ) -> Tuple[float, dict]:
     """
     Evaluate GA individual: planner → simulator → metrics → objective.
+    
+    Args:
+        frozen_overrides: If provided, these cases are locked and scheduled first.
     
     Returns: (fitness, metrics_dict)
     """
@@ -505,6 +562,7 @@ def evaluate_individual(
         n_rooms=n_rooms,
         rest_time=rest_time,
         max_reschedule_weeks=max_reschedule_weeks,
+        frozen_overrides=frozen_overrides,  # Pass frozen cases to block calendars first
     )
     
     # Step 2: Build priority_rank from permutation
@@ -556,9 +614,14 @@ def run_ga_for_scenario(
     tournament_k: int,
     weights: Dict[str, float],
     seed_ga: int,
+    frozen_time: int = 0,  # NEW: Cases with planned_start < frozen_time are locked
 ) -> Tuple[pd.DataFrame, dict, dict]:
     """
     Run GA for single scenario seed.
+    
+    Args:
+        frozen_time: Minutes since week start. Cases with scheduled_start < frozen_time 
+                     are frozen and keep their original schedule. Default 0 = all modifiable.
     
     Returns: (best_schedule_df, best_metrics, baseline_metrics)
     """
@@ -589,6 +652,11 @@ def run_ga_for_scenario(
     for _, row in elective_input_df.iterrows():
         pid_raw = row["pid"]
         # Handle both "P20" and 20 formats
+        # Skip urgent patients (format "U0001", "U0002", etc.)
+        if isinstance(pid_raw, str) and pid_raw.startswith("U"):
+            continue
+        
+        # Handle both "P20" and 20 formats for elective patients
         if isinstance(pid_raw, str) and pid_raw.startswith("P"):
             pid = int(pid_raw[1:])
         else:
@@ -621,10 +689,65 @@ def run_ga_for_scenario(
             "prep_time": sim.PREP_TIME_MIN.get(stype, 30),
         }
     
-    # Create baseline individual (identity chromosome)
-    baseline_priority = sorted(elective_cases.keys(), key=lambda p: elective_cases[p].planned_start)
-    baseline_team_idx = {}
+    # =========================================================================
+    # Split into frozen vs modifiable cases based on frozen_time
+    # =========================================================================
+    frozen_pids: Set[int] = set()
+    modifiable_pids: Set[int] = set()
+    
     for pid, case in elective_cases.items():
+        if case.planned_start < frozen_time:
+            frozen_pids.add(pid)
+        else:
+            modifiable_pids.add(pid)
+    
+    print(f"Frozen time: {frozen_time} min")
+    print(f"  Frozen cases: {len(frozen_pids)}")
+    print(f"  Modifiable cases: {len(modifiable_pids)}")
+    
+    # Build frozen_overrides for locked cases (from baseline)
+    frozen_overrides: Optional[PlannerOverrides] = None
+    if frozen_pids:
+        frozen_overrides = PlannerOverrides(
+            scheduled_start_by_pid={pid: elective_cases[pid].planned_start for pid in frozen_pids},
+            room_by_pid={pid: elective_cases[pid].baseline_room for pid in frozen_pids},
+            team_by_pid={pid: elective_cases[pid].baseline_team for pid in frozen_pids},
+        )
+    
+    # EARLY RETURN: If no modifiable cases, just return frozen schedule
+    if not modifiable_pids:
+        print("No modifiable cases - returning frozen schedule only")
+        schedule_rows = []
+        for pid in frozen_pids:
+            c = elective_cases[pid]
+            day = c.planned_start // sim.MINUTES_PER_DAY
+            time_hhmm = sim.minutes_to_hhmm(c.planned_start % sim.MINUTES_PER_DAY)
+            main, a1, a2 = c.baseline_team
+            schedule_rows.append({
+                "patient_id": f"E{pid}",
+                "patient_type": "ELECTIVE",
+                "surgery_type": c.surgery_type,
+                "arrival_time": c.planned_start,
+                "wait_time": 0,
+                "day": day,
+                "time_hhmm": time_hhmm,
+                "actual_start": c.planned_start,
+                "duration": c.duration,
+                "room": c.baseline_room,
+                "main": main,
+                "assist1": a1,
+                "assist2": a2 or "",
+            })
+        baseline_df = pd.DataFrame(schedule_rows)
+        baseline_metrics = {"objective": 0, "urgent_wait_weighted": 0, "elective_delay_total": 0, "overtime_total": 0}
+        return baseline_df, baseline_metrics, baseline_metrics
+    
+    # Create baseline individual (identity chromosome) - ONLY modifiable PIDs
+    modifiable_list = sorted(modifiable_pids, key=lambda p: elective_cases[p].planned_start)
+    
+    baseline_team_idx = {}
+    for pid in modifiable_pids:
+        case = elective_cases[pid]
         team = case.baseline_team
         stype = case.surgery_type
         if stype in team_to_idx_map and team in team_to_idx_map[stype]:
@@ -632,10 +755,10 @@ def run_ga_for_scenario(
         else:
             baseline_team_idx[pid] = 0  # Fallback
     
-    baseline_room = {pid: case.baseline_room for pid, case in elective_cases.items()}
+    baseline_room = {pid: elective_cases[pid].baseline_room for pid in modifiable_pids}
     
     baseline_ind = GAIndividual(
-        priority_list=baseline_priority[:],
+        priority_list=modifiable_list[:],
         team_idx_by_pid=dict(baseline_team_idx),
         room_by_pid=dict(baseline_room),
     )
@@ -655,6 +778,7 @@ def run_ga_for_scenario(
         max_reschedule_weeks,
         penalty_next_week,
         weights,
+        frozen_overrides,  # Pass frozen cases
     )
     baseline_ind.fitness = baseline_fitness
     baseline_ind.metrics = baseline_metrics
@@ -697,7 +821,8 @@ def run_ga_for_scenario(
                 ind.fitness, ind.metrics = evaluate_individual(
                     ind, elective_cases, elective_baseline_data, urgent_list,
                     valid_teams, work, cap, n_rooms, rest_time,
-                    max_reschedule_weeks, penalty_next_week, weights
+                    max_reschedule_weeks, penalty_next_week, weights,
+                    frozen_overrides
                 )
                 cache[key] = (ind.fitness, ind.metrics)
     
@@ -772,7 +897,8 @@ def run_ga_for_scenario(
                     ind.fitness, ind.metrics = evaluate_individual(
                         ind, elective_cases, elective_baseline_data, urgent_list,
                         valid_teams, work, cap, n_rooms, rest_time,
-                        max_reschedule_weeks, penalty_next_week, weights
+                        max_reschedule_weeks, penalty_next_week, weights,
+                        frozen_overrides
                     )
                     cache[key] = (ind.fitness, ind.metrics)
         

@@ -1,0 +1,21 @@
+pid,surgery_type,day,time_hhmm,room,main,assist1,assist2
+E001,excision of the lymphadenopathy from the lumbar,0,08:00,1,S3,S1,S10
+E002,microlaryngoscopy,0,08:50,1,S4,S2,S9
+E003,adenotonsillectomy,0,08:00,2,S4,S9,S7
+E004,modified radical mastoidectomy,0,09:20,2,S6,S7,S9
+E005,sleep apnea diagnosis test,1,08:00,1,S2,S10,S9
+E006,microlaryngoscopy,1,08:50,1,S3,S9,S7
+E007,buccal mucosa bioppsy,1,08:00,2,S3,S9,S7
+E008,modified radical mastoidectomy,1,08:50,2,S6,S4,S9
+E009,septoplasty,2,08:00,1,S4,S2,S8
+E010,buccal mucosa bioppsy,2,09:50,1,S3,S9,S10
+E011,thyroidectomy,2,08:00,2,S6,S4,S10
+E012,buccal mucosa bioppsy,2,11:00,2,S3,S9,S7
+E013,thyroidectomy,3,08:00,1,S6,S4,S10
+E014,buccal mucosa bioppsy,3,11:00,1,S3,S9,S10
+E015,excision of the lymphadenopathy from the lumbar,3,08:00,2,S3,S9,S8
+E016,modified radical mastoidectomy,3,08:50,2,S6,S3,S9
+E017,septoplasty,4,08:00,1,S3,S9,S10
+E018,endoscopic sinus,4,09:50,1,S5,S8,S10
+E019,modified radical mastoidectomy,4,08:00,2,S6,S4,S8
+E020,septoplasty,4,10:00,2,S4,S1,S7

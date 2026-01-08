@@ -1,0 +1,38 @@
+{
+  "scenario_seed": 3,
+  "baseline": {
+    "rooms": 2,
+    "urgent_arrived": 6,
+    "urgent_started": 4,
+    "urgent_backlog_end": 2,
+    "urgent_wait_total": 2129.866588298489,
+    "urgent_wait_weighted": 3749.067771321093,
+    "elective_started": 35,
+    "elective_delay_total": 10909.0,
+    "elective_delayed_next_week": 0,
+    "overtime_total": 10035,
+    "unproductive_total": 0,
+    "elective_rescheduled_count": 102
+  },
+  "ga_best": {
+    "rooms": 2,
+    "urgent_arrived": 6,
+    "urgent_started": 4,
+    "urgent_backlog_end": 2,
+    "urgent_wait_total": 2119.866588298489,
+    "urgent_wait_weighted": 3719.067771321093,
+    "elective_started": 31,
+    "elective_delay_total": 14596.0,
+    "elective_delayed_next_week": 0,
+    "overtime_total": 9135,
+    "unproductive_total": 0,
+    "elective_rescheduled_count": 373
+  },
+  "improvement": {
+    "urgent_wait_weighted": 30.0,
+    "urgent_wait_total": 10.0,
+    "elective_delay_total": -3687.0,
+    "overtime_total": 900,
+    "elective_delayed_next_week": 0
+  }
+}

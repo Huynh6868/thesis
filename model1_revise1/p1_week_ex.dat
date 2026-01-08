@@ -1,0 +1,40 @@
+/*********************************************
+ * OPL 12.9.0.0 Data
+ * Author: ASUS
+ * Creation Date: Dec 17, 2025 at 12:54:27 AM
+ *********************************************/
+/******************************************************************************
+ * OPL Data File connecting to Excel
+ * Make sure "Phase1_Data.xlsx" is in the same folder
+ ******************************************************************************/
+
+// 1. Declare Connection
+SheetConnection mySheet("p1_small_dat1.xlsx");
+
+// 2. Read Simple Sets & Parameters
+P from SheetRead(mySheet, "Range_Patients");
+S from SheetRead(mySheet, "Range_Surgeons");
+SurgeryTypes from SheetRead(mySheet, "Range_SurgeryTypes");
+
+wh from SheetRead(mySheet, "Range_WH");
+
+// 3. Read Arrays (1D)
+// Syntax: Variable from SheetRead(Connection, "RangeName");
+DurationByType from SheetRead(mySheet, "Range_Durations");
+RestingTimeByType from SheetRead(mySheet, "Range_Resting");
+
+// Read Tuple/Map manually or use arrays
+// For PatientType (int -> string), OPL reads array of strings directly
+PatientType from SheetRead(mySheet, "Range_PatientTypes");
+
+// 4. Read 2D Matrices (Skills)
+// OPL reads 2D ranges row by row. 
+// Ensure the Excel range dimensions match [S][SurgeryTypes]
+IsResponsible from SheetRead(mySheet, "Range_Skills_Main");
+IsAssistant1 from SheetRead(mySheet, "Range_Skills_Asst1");
+
+// Read 1D Array for Asst2
+IsAssistant2 from SheetRead(mySheet, "Range_Skills_Asst2");
+
+// 5. Big M (Optional - can be hardcoded or read from Excel)
+// BigM = 20000;

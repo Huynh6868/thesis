@@ -1,0 +1,61 @@
+
+Starting GA with 100 individuals for 100 generations...
+Gen 1/100: Best fitness = 23600.3
+Gen 10/100: Best fitness = 23600.3
+Gen 20/100: Best fitness = 23600.3
+Gen 30/100: Best fitness = 23600.3
+Gen 40/100: Best fitness = 23600.3
+Gen 50/100: Best fitness = 23600.3
+Gen 60/100: Best fitness = 23600.3
+Gen 70/100: Best fitness = 23600.3
+Gen 80/100: Best fitness = 23600.3
+Gen 90/100: Best fitness = 23600.3
+Gen 100/100: Best fitness = 23600.3
+
+============================================================
+VALIDATING BEST SOLUTION WITH FULL SIMPY SIMULATION...
+============================================================
+
+Accuracy Check (Lightweight vs SimPy):
+  Elective delay: 11770 vs 11786
+  Urgent wait: 1833 vs 1833
+  Overtime: 9930 vs 9930
+  Elective delay error: 0.1%
+  Overtime error: 0.0%
+====================================================================================================
+GA DONE for scenario_seed=1
+Saved: best_schedule_seed1.xlsx
+Saved: comparison_seed1.json
+----------------------------------------------------------------------------------------------------
+Baseline metrics:
+{
+  "rooms": 2,
+  "urgent_arrived": 5,
+  "urgent_started": 3,
+  "urgent_backlog_end": 2,
+  "urgent_wait_total": 1018.6032172374793,
+  "urgent_wait_weighted": 1833.308846345737,
+  "elective_started": 35,
+  "elective_delay_total": 14115.0,
+  "elective_delayed_next_week": 0,
+  "overtime_total": 10170,
+  "unproductive_total": 0,
+  "elective_rescheduled_count": 151
+}
+----------------------------------------------------------------------------------------------------
+GA best metrics:
+{
+  "rooms": 2,
+  "urgent_arrived": 5,
+  "urgent_started": 3,
+  "urgent_backlog_end": 2,
+  "urgent_wait_total": 1018.6032172374793,
+  "urgent_wait_weighted": 1833.308846345737,
+  "elective_started": 34,
+  "elective_delay_total": 11786.0,
+  "elective_delayed_next_week": 0,
+  "overtime_total": 9930,
+  "unproductive_total": 0,
+  "elective_rescheduled_count": 309
+}
+====================================================================================================

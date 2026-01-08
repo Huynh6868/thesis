@@ -1,0 +1,39 @@
+"""
+HƯỚNG DẪN CHẠY MEDIUM SCALE TEST
+=================================
+
+Bước 1: Tạo file .dat
+----------------------
+cd "c:\Users\ASUS\OneDrive\nam 4\THESIS\code - Copy\initial solution\rule-based-final"
+python medium_data_test.py
+
+→ Output: medium_scale_50p.dat
+
+Bước 2: Chạy heuristic
+----------------------
+cd "c:\Users\ASUS\OneDrive\nam 4\THESIS\code - Copy\initial solution"
+python heuristic_med.py
+
+→ Output: large_scale_result.xlsx (50 patients)
+
+Bước 3: Chạy GA với kết quả
+---------------------------
+cd "c:\Users\ASUS\OneDrive\nam 4\THESIS\code - Copy\initial solution\rule-based-final"
+
+python ga_optimize_priority_fullschedule.py \
+  --elective_sched "large_scale_result.xlsx" \
+  --scenario_seed 1 \
+  --max_weeks 1 \
+  --pop 50 \
+  --gens 50
+
+KỲ VỌNG:
+- Heuristic: Xếp được ~45-50/50 patients (90-100%)
+- GA baseline: Nên xếp được ~45-50 patients (tương đương heuristic)
+- GA final: Improve metrics (urgent wait, elective delay)
+
+So với Large Scale (97/150 patients):
+- Medium scale dễ hơn → GA planner nên work tốt
+- Ít conflicts → max_weeks=1 đủ
+- Test GA logic trước khi scale up
+"""

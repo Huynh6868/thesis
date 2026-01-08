@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ASCII"?><project>
+	<version>1.0</version>
+	<configs>
+		<config default="false" name="Configuration1" category="opl">
+			<ref name="model1_1DAY.mod" type="model">
+			</ref>
+			<ref name="model1_1DAY.dat" type="data">
+			</ref>
+		</config>
+		<config default="true" name="Configuration2" category="opl">
+			<ref name="d_model1_week.mod" type="model">
+			</ref>
+			<ref name="test_week_update.dat" type="data">
+			</ref>
+		</config>
+		<config default="false" name="run2" category="opl">
+			<ref name="model 2.dat" type="data">
+			</ref>
+			<ref name="test_model 2.mod" type="model">
+			</ref>
+		</config>
+		<config default="false" name="model1_OR" category="opl">
+			<ref name="model1_ORinclude/d_model1_week_ORcapacity.mod" type="model">
+			</ref>
+			<ref name="model1_ORinclude/test_week_update_ORcapacity.dat" type="data">
+			</ref>
+		</config>
+		<config default="false" name="1_dataset1" category="opl">
+			<ref name="d_model1_week.mod" type="model">
+			</ref>
+			<ref name="1_dataset1a.dat" type="data">
+			</ref>
+		</config>
+		<config default="false" name="model1_OR_dataset1" category="opl">
+			<ref name="d_model1_week_ORcapacity.mod" type="model">
+			</ref>
+			<ref name="Data_1_EDITED.dat" type="data">
+			</ref>
+		</config>
+		<config default="false" name="model2_OR_dataset1" category="opl">
+			<ref name="test_model 2.mod" type="model">
+			</ref>
+			<ref name="model2_OR_DAT1.dat" type="data">
+			</ref>
+		</config>
+	</configs>
+	
+</project>

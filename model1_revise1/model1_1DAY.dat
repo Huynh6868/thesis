@@ -1,0 +1,79 @@
+/*********************************************
+ * OPL Data - Boolean Matrix Version
+ * ASCII Characters Only - Safe to Save
+ *********************************************/
+
+// 1. SET OF PATIENTS (P)
+P = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+// 2. SET OF SURGEONS (S)
+S = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+// 3. DAILY WORKING HOURS (wh)
+wh = 480;
+
+// 4. SET OF SURGERY TYPES
+SurgeryTypes = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+// ============================================================================
+// SURGEON SKILL MATRICES (Rows: Surgeons 1..10, Cols: SurgeryTypes)
+// 1 = Qualified, 0 = Not Qualified
+// Order of columns must match SurgeryTypes set order!
+// Adeno, Micro, Buccal, Excision, Septo, Modified, Thyroi, Rhino, Endos, Sleep
+// ============================================================================
+
+// 4.1 Responsible Surgeon (IsResponsible)
+IsResponsible = [
+// S1
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+// S2
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+// S3
+  [1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+// S4
+  [1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+// S5
+  [0, 0, 0, 0, 0, 0, 0, 1, 1, 0],
+// S6
+  [0, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+// S7..S10 (Cannot be main surgeon)
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+];
+
+// 4.2 First Assistant (IsAssistant1)
+// Adeno, Micro, Buccal, Excision, Septo, Modified, Thyroi, Rhino, Endos, Sleep
+IsAssistant1 = [
+// S1
+  [1, 1, 1, 1, 1, 0, 0, 0, 1, 1],
+// S2
+  [1, 1, 1, 1, 1, 0, 0, 0, 1, 1],
+// S3
+  [0, 0, 0, 0, 0, 1, 1, 1, 0, 0],
+// S4
+  [0, 0, 0, 0, 0, 1, 1, 1, 0, 0],
+// S5..S10
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+];
+
+// 4.3 Second Assistant (IsAssistant2) - 1D Array for Surgeons 1..10
+// S7, S8, S9, S10 are qualified (1), others are not (0)
+IsAssistant2 = [0, 0, 0, 0, 0, 0, 1, 1, 1, 1];
+
+// ============================================================================
+
+// 5. DURATION FOR EACH SURGERY TYPE
+DurationByType = [60, 65, 30, 30, 90, 100, 160, 90, 65, 30];
+
+// 6. PATIENT TO SURGERY TYPE MAPPING
+PatientType = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+// 7. RESTING TIME FOR EACH SURGERY TYPE
+RestingTimeByType = [15, 15, 15, 15, 15, 30, 30, 20, 20, 10];
