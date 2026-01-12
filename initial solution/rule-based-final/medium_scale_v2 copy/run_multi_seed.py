@@ -27,7 +27,7 @@ INITIAL_SCHEDULE = os.path.join(_SCRIPT_DIR, "medium_rulebased_output.xlsx")
 WORK_SCHEDULE = os.path.join(_SCRIPT_DIR, "lich_lam_viec_tuan1_med.xlsx")
 CAP_RANK = os.path.join(_SCRIPT_DIR, "Cap_Rank.xlsx")
 NUM_SEEDS = 10
-GA_GENS = 10
+GA_GENS = 20
 GA_POP = 30
 SEED_GA = 42
 
