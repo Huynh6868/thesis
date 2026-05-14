@@ -1,0 +1,17 @@
+
+================================================================================
+MULTI-SEED SIMULATION LOG - MEDIUM SCALE
+Started at: 2026-01-09 10:37:54
+================================================================================
+Configuration:
+  - Number of Seeds: 10
+  - GA Generations: 20
+  - GA Population: 30
+  - Mean Interarrival: 210.0 minutes
+  - Log File: c:\Users\ASUS\OneDrive\nam 4\THESIS\code - Copy\initial solution\rule-based-final\medium_scale_v2 copy\multi_seed_log_20260109_103754.txt
+================================================================================
+
+
+================================================================================
+SEED 1/10
+================================================================================

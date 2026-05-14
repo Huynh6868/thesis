@@ -114,6 +114,71 @@ def run_online_simulation(
     all_metrics: List[dict] = []
     schedule_history: List[pd.DataFrame] = [current_schedule_df.copy()]
 
+    # =========================================================================
+    # PATH A: NO-GA BASELINE - Evaluate original rule-based through all triggers
+    # This gives us the TRUE baseline: what happens if we NEVER run GA
+    # =========================================================================
+    print(f"\n{'='*60}")
+    print("PATH A: Running NO-GA baseline simulation")
+    print(f"Using ORIGINAL rule-based schedule throughout (no optimization)")
+    print(f"{'='*60}")
+    
+    noGA_schedule = original_rulebased_schedule_df.copy()
+    noGA_metrics_per_trigger: List[dict] = []
+    
+    for idx, (urgent_arrival_time, urgent_type) in enumerate(urgent_list_sorted):
+        frozen_time = int(math.ceil(urgent_arrival_time - 1e-12))
+        observed_urgent_list = urgent_list_sorted[: idx + 1]
+        
+        print(f"No-GA Trigger {idx+1}/{len(urgent_list)}: {urgent_type} at {frozen_time} min")
+        
+        try:
+            # Evaluate original rule-based schedule (NO optimization, gens=0)
+            _, noGA_metrics, _ = run_ga_for_scenario(
+                elective_input_df=noGA_schedule,  # Always use original rule-based
+                work_schedule_path=work_schedule_path,
+                cap_rank_path=cap_rank_path,
+                scenario_seed=scenario_seed,
+                mean_interarrival=mean_interarrival,
+                observed_urgent_list=observed_urgent_list,
+                rest_time=rest_time,
+                max_reschedule_weeks=max_reschedule_weeks,
+                penalty_next_week=penalty_next_week,
+                pop_size=1,
+                gens=0,  # NO GA optimization
+                cx_rate=0.0,
+                mut_rate=0.0,
+                tournament_k=2,
+                weights=weights,
+                seed_ga=seed_ga,
+                frozen_time=frozen_time,
+            )
+            
+            noGA_penalty = noGA_metrics.get("objective", 0)
+            noGA_metrics_per_trigger.append({
+                "urgent_idx": idx,
+                "penalty": noGA_penalty,
+            })
+            
+            print(f"  No-GA penalty: {noGA_penalty:.1f}")
+            
+        except Exception as e:
+            print(f"Warning: No-GA evaluation failed for urgent #{idx+1}: {e}")
+            noGA_metrics_per_trigger.append({
+                "urgent_idx": idx,
+                "penalty": 0,
+            })
+    
+    # Final No-GA penalty (at last trigger with all urgents)
+    noGA_final_penalty = noGA_metrics_per_trigger[-1]["penalty"] if noGA_metrics_per_trigger else 0
+    print(f"\nNo-GA FINAL penalty (with all {len(urgent_list)} urgents): {noGA_final_penalty:.1f}")
+    
+    # =========================================================================
+    # PATH B: GA OPTIMIZATION - Run GA at each trigger
+    # =========================================================================
+    print(f"\n{'='*60}")
+    print("PATH B: Running GA-optimized simulation")
+    print(f"{'='*60}")
     
     # Process each urgent arrival as a trigger point
     # Each GA run uses the CURRENT schedule (initially from heuristic, then from previous GA)
@@ -175,75 +240,55 @@ def run_online_simulation(
     print(f"\n{'='*60}")
     print("ONLINE SIMULATION COMPLETE")
     print(f"{'='*60}")
-    total_improvement = sum(m["improvement"] for m in all_metrics)
     
-    # Calculate percentage improvement: compare FINAL baseline (with all urgents) vs FINAL best
     if all_metrics:
         # =====================================================================
-        # TRUE BASELINE COMPARISON
-        # Run both original rule-based schedule AND final GA-optimized schedule
-        # through the same simulation with ALL urgent cases
+        # TRUE COMPARISON: No-GA (original rule-based) vs GA-optimized
+        # Both evaluated with ALL urgents and same frozen_time constraints
         # =====================================================================
-        print(f"\n--- Computing TRUE Baseline vs GA Comparison ---")
-        print(f"Evaluating ORIGINAL rule-based schedule with ALL {len(urgent_list)} urgents...")
-        
-        # Evaluate ORIGINAL rule-based schedule (never touched by GA)
-        try:
-            _, true_baseline_metrics, _ = run_ga_for_scenario(
-                elective_input_df=original_rulebased_schedule_df,
-                work_schedule_path=work_schedule_path,
-                cap_rank_path=cap_rank_path,
-                scenario_seed=scenario_seed,
-                mean_interarrival=mean_interarrival,
-                observed_urgent_list=urgent_list_sorted,  # ALL urgents
-                rest_time=rest_time,
-                max_reschedule_weeks=max_reschedule_weeks,
-                penalty_next_week=penalty_next_week,
-                pop_size=1,  # Minimal - just evaluating baseline
-                gens=0,      # No optimization - just evaluation
-                cx_rate=0.0,
-                mut_rate=0.0,
-                tournament_k=2,
-                weights=weights,
-                seed_ga=seed_ga,
-                frozen_time=None,  # No frozen cases for baseline
-            )
-            true_baseline_fitness = true_baseline_metrics.get("objective", 0)
-        except Exception as e:
-            print(f"Warning: Could not evaluate true baseline: {e}")
-            true_baseline_fitness = all_metrics[0]["baseline_fitness"] if all_metrics else 0
-        
-        # The final GA-optimized fitness (from last trigger with all urgents)
         final_ga_fitness = all_metrics[-1]["best_fitness"]
+        final_baseline_fitness = noGA_final_penalty
+        final_improvement = final_baseline_fitness - final_ga_fitness
         
-        # Calculate TRUE improvement
-        true_improvement = true_baseline_fitness - final_ga_fitness
-        true_pct_improvement = ((true_improvement) / true_baseline_fitness * 100) if true_baseline_fitness > 0 else 0
+        # Calculate percentage improvement
+        pct_improvement = (final_improvement / final_baseline_fitness * 100) if final_baseline_fitness > 0 else 0
         
         print(f"\n{'='*60}")
-        print(f"TRUE COMPARISON: Rule-Based vs GA-Optimized")
+        print(f"TRUE COMPARISON: No-GA (rule-based) vs GA-optimized")
+        print(f"With ALL {len(urgent_list)} urgents")
         print(f"{'='*60}")
-        print(f"Original Rule-Based (with ALL {len(urgent_list)} urgents): {true_baseline_fitness:.1f}")
-        print(f"Final GA-Optimized (with ALL {len(urgent_list)} urgents): {final_ga_fitness:.1f}")
-        print(f"TRUE Improvement: {true_improvement:.1f} ({true_pct_improvement:.2f}%)")
-        print(f"\n(Note: Previous 'per-trigger' improvements are not directly comparable)")
+        print(f"PATH A (No-GA, original rule-based throughout): {final_baseline_fitness:.1f}")
+        print(f"PATH B (GA-optimized at each trigger): {final_ga_fitness:.1f}")
+        print(f"TRUE Improvement: {final_improvement:.1f} ({pct_improvement:.2f}%)")
         
-        pct_improvement = true_pct_improvement
+        # Also show per-trigger GA improvement (for reference)
+        print(f"\n--- Per-trigger GA improvements (incremental refinement) ---")
+        total_per_trigger_improvement = 0
+        for m in all_metrics:
+            trigger_pct = (m['improvement'] / m['baseline_fitness'] * 100) if m['baseline_fitness'] > 0 else 0
+            total_per_trigger_improvement += m['improvement']
+            print(f"Trigger {m['urgent_idx']+1}: baseline={m['baseline_fitness']:.1f}, GA={m['best_fitness']:.1f}, improvement={m['improvement']:.1f} ({trigger_pct:.2f}%)")
+        
+        print(f"\nNote: Per-trigger improvements measure iterative GA refinement")
+        print(f"      (GA_i improving over GA_i-1, not over rule-based)")
+        print(f"      TRUE improvement (No-GA vs final GA) is: {final_improvement:.1f} ({pct_improvement:.2f}%)")
     else:
-        print(f"Total improvement across {len(all_metrics)} triggers: {total_improvement:.1f}")
         pct_improvement = 0
-        true_baseline_fitness = 0
+        final_baseline_fitness = 0
         final_ga_fitness = 0
+        final_improvement = 0
+        print("No metrics collected - no urgent cases processed")
     
     return {
         "final_schedule": current_schedule_df,
         "original_rulebased_schedule": original_rulebased_schedule_df,
         "schedule_history": schedule_history,
         "metrics_per_trigger": all_metrics,
-        "total_improvement": total_improvement,
+        "noGA_metrics_per_trigger": noGA_metrics_per_trigger,
+        "final_improvement": final_improvement,
         "pct_improvement": pct_improvement,
         "urgent_count": len(urgent_list),
-        "true_baseline_fitness": true_baseline_fitness,
+        "noGA_baseline_fitness": final_baseline_fitness,
         "final_ga_fitness": final_ga_fitness,
     }
 

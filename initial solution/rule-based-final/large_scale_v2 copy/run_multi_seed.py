@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Run Online Simulation for Multiple Seeds - Large Scale
+Run Online Simulation for Multiple Seeds (with Multiprocessing) - Large Scale
 Collect metrics for each seed: baseline, GA improved, % improvement, execution time
 """
 
@@ -8,7 +8,7 @@ import sys
 import os
 import time
 import pandas as pd
-from datetime import datetime
+from multiprocessing import Pool, cpu_count
 
 # Set UTF-8 encoding for output
 if sys.platform == "win32":
@@ -27,180 +27,154 @@ INITIAL_SCHEDULE = os.path.join(_SCRIPT_DIR, "large_rulebased_output.xlsx")
 WORK_SCHEDULE = os.path.join(_SCRIPT_DIR, "lich_lam_viec_tuan1_large.xlsx")
 CAP_RANK = os.path.join(_SCRIPT_DIR, "Cap_Rank.xlsx")
 NUM_SEEDS = 10
-GA_GENS = 10
+GA_GENS = 20
 GA_POP = 30
 SEED_GA = 42
 
-# Create log file with timestamp
-timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-log_file = os.path.join(_SCRIPT_DIR, f"multi_seed_log_{timestamp}.txt")
 
-def log_message(message, file_handle=None):
-    """Print to console and write to log file"""
-    print(message)
-    if file_handle:
-        file_handle.write(message + "\n")
-        file_handle.flush()  # Ensure data is written immediately
-
-# Load mean_interarrival from Excel
-mean_interarrival = sim.load_urgent_param_from_excel(CAP_RANK, 'Large scale')
-startup_msg = f"Loaded mean_interarrival from Excel: {mean_interarrival} minutes (Large scale)"
-
-# Results storage
-results_data = []
-
-# Open log file and write header
-with open(log_file, 'w', encoding='utf-8') as f:
-    header = f"""
-{'='*80}
-MULTI-SEED SIMULATION LOG - LARGE SCALE
-Started at: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
-{'='*80}
-Configuration:
-  - Number of Seeds: {NUM_SEEDS}
-  - GA Generations: {GA_GENS}
-  - GA Population: {GA_POP}
-  - Mean Interarrival: {mean_interarrival} minutes
-  - Log File: {log_file}
-{'='*80}
-"""
-    log_message(header, f)
-
-# Load initial schedule
-initial_df = pd.read_excel(INITIAL_SCHEDULE)
-
-# Load rest time map
-rest_time_map = sim.load_rest_time_map(CAP_RANK)
-
-print("\n" + "="*80)
-print("RUNNING ONLINE SIMULATION FOR 10 SEEDS - LARGE SCALE")
-print("="*80)
-
-# Re-open log file in append mode for writing seed results
-with open(log_file, 'a', encoding='utf-8') as f:
-    for seed in range(1, NUM_SEEDS + 1):
-        separator = f"\n{'='*80}\nSEED {seed}/{NUM_SEEDS}\n{'='*80}"
-        log_message(separator, f)
+def run_single_seed(seed: int) -> dict:
+    """
+    Worker function to run online simulation for a single seed.
+    This function will be executed in parallel by multiprocessing.Pool.
+    
+    Args:
+        seed: Scenario seed to run
+    
+    Returns:
+        dict with seed results or error information
+    """
+    try:
+        # Load data inside worker (each process needs its own copy)
+        mean_interarrival = sim.load_urgent_param_from_excel(CAP_RANK, 'Large scale')
+        initial_df = pd.read_excel(INITIAL_SCHEDULE)
+        rest_time_map = sim.load_rest_time_map(CAP_RANK)
         
+        print(f"[Seed {seed}] Starting...")
         start_time = time.time()
         
-        try:
-            results = run_online_simulation(
-                initial_schedule_df=initial_df,
-                work_schedule_path=WORK_SCHEDULE,
-                cap_rank_path=CAP_RANK,
-                scenario_seed=seed,
-                mean_interarrival=mean_interarrival,
-                rest_time=rest_time_map,
-                ga_gens_per_trigger=GA_GENS,
-                ga_pop_size=GA_POP,
-                seed_ga=SEED_GA,
-            )
-            
-            execution_time = time.time() - start_time
-            
-            # Extract metrics
-            true_baseline = results.get("true_baseline_fitness", 0)
-            final_ga = results.get("final_ga_fitness", 0)
-            pct_improvement = results.get("pct_improvement", 0)
-            urgent_count = results.get("urgent_count", 0)
-            
-            results_data.append({
-                "Seed": seed,
-                "Urgent Count": urgent_count,
-                "Baseline Objective": true_baseline,
-                "GA Improved Objective": final_ga,
-                "Improvement": true_baseline - final_ga,
-                "% Improvement": pct_improvement,
-                "Execution Time (s)": execution_time,
-            })
-            
-            # Write results to log immediately
-            result_msg = f"""
-Seed {seed} completed in {execution_time:.1f} seconds
-  Urgent Count: {urgent_count}
-  Baseline: {true_baseline:.1f}
-  GA: {final_ga:.1f}
-  Improvement: {true_baseline - final_ga:.1f} ({pct_improvement:.2f}%)
-  Status: SUCCESS
-"""
-            log_message(result_msg, f)
-            
-            # Save incremental Excel file after each seed
-            df_results = pd.DataFrame(results_data)
-            output_path = os.path.join(_SCRIPT_DIR, "multi_seed_results_large.xlsx")
-            df_results.to_excel(output_path, index=False)
-            log_message(f"Results saved to Excel: {output_path}", f)
-            
-        except Exception as e:
-            execution_time = time.time() - start_time
-            error_msg = f"""
-ERROR for seed {seed} after {execution_time:.1f} seconds:
-  Error Type: {type(e).__name__}
-  Error Message: {str(e)}
-  Status: FAILED
-"""
-            log_message(error_msg, f)
-            import traceback
-            traceback_str = traceback.format_exc()
-            f.write(traceback_str + "\n")
-            f.flush()
-            continue
-
-# Print summary table
-print("\n" + "="*80)
-print("SUMMARY OF ALL SEEDS - LARGE SCALE")
-print("="*80)
-
-# Append summary to log file
-with open(log_file, 'a', encoding='utf-8') as f:
-    summary_header = f"\n{'='*80}\nSUMMARY OF ALL SEEDS - LARGE SCALE\n{'='*80}"
-    log_message(summary_header, f)
-    
-    if results_data:
-        df_results = pd.DataFrame(results_data)
+        results = run_online_simulation(
+            initial_schedule_df=initial_df,
+            work_schedule_path=WORK_SCHEDULE,
+            cap_rank_path=CAP_RANK,
+            scenario_seed=seed,
+            mean_interarrival=mean_interarrival,
+            rest_time=rest_time_map,
+            ga_gens_per_trigger=GA_GENS,
+            ga_pop_size=GA_POP,
+            seed_ga=SEED_GA,
+        )
         
-        # Print table to console and log
-        table_str = "\n" + df_results.to_string(index=False)
-        log_message(table_str, f)
+        execution_time = time.time() - start_time
+        
+        # Extract metrics
+        true_baseline = results.get("true_baseline_fitness", 0)
+        final_ga = results.get("final_ga_fitness", 0)
+        pct_improvement = results.get("pct_improvement", 0)
+        urgent_count = results.get("urgent_count", 0)
+        
+        result_dict = {
+            "Seed": seed,
+            "Urgent Count": urgent_count,
+            "Baseline Objective": true_baseline,
+            "GA Improved Objective": final_ga,
+            "Improvement": true_baseline - final_ga,
+            "% Improvement": pct_improvement,
+            "Execution Time (s)": execution_time,
+            "Status": "Success",
+        }
+        
+        print(f"[Seed {seed}] Completed in {execution_time:.1f}s | Improvement: {pct_improvement:.2f}%")
+        return result_dict
+        
+    except Exception as e:
+        print(f"[Seed {seed}] ERROR: {e}")
+        import traceback
+        traceback.print_exc()
+        
+        return {
+            "Seed": seed,
+            "Urgent Count": 0,
+            "Baseline Objective": 0,
+            "GA Improved Objective": 0,
+            "Improvement": 0,
+            "% Improvement": 0,
+            "Execution Time (s)": 0,
+            "Status": f"Failed: {str(e)[:50]}",
+        }
+
+
+def main():
+    """Main entry point with multiprocessing."""
+    print("\n" + "="*80)
+    print("RUNNING ONLINE SIMULATION FOR 10 SEEDS (MULTIPROCESSING) - LARGE SCALE")
+    print("="*80)
+    
+    # Determine number of processes (leave 1 core free for system)
+    num_processes = max(1, cpu_count() - 1)
+    print(f"\nUsing {num_processes} parallel processes (CPU cores: {cpu_count()})")
+    
+    # Prepare seeds list
+    seeds = list(range(1, NUM_SEEDS + 1))
+    
+    # Run in parallel using multiprocessing Pool
+    print(f"\nStarting parallel execution for {NUM_SEEDS} seeds...")
+    overall_start = time.time()
+    
+    with Pool(processes=num_processes) as pool:
+        results_data = pool.map(run_single_seed, seeds)
+    
+    overall_time = time.time() - overall_start
+    
+    # Filter successful results
+    successful_results = [r for r in results_data if r["Status"] == "Success"]
+    failed_count = len(results_data) - len(successful_results)
+    
+    # Print summary table
+    print("\n" + "="*80)
+    print("SUMMARY OF ALL SEEDS - LARGE SCALE")
+    print("="*80)
+    
+    if successful_results:
+        df_results = pd.DataFrame(successful_results)
+        
+        # Sort by seed for readability
+        df_results = df_results.sort_values("Seed").reset_index(drop=True)
+        
+        # Print table (exclude Status column for successful runs)
+        display_df = df_results.drop(columns=["Status"])
+        print("\n" + display_df.to_string(index=False))
         
         # Print statistics
-        stats_header = f"\n{'='*80}\nSTATISTICS ACROSS ALL SEEDS\n{'='*80}"
-        log_message(stats_header, f)
+        print("\n" + "="*80)
+        print("STATISTICS ACROSS ALL SEEDS")
+        print("="*80)
+        print(f"Successful runs: {len(successful_results)}/{NUM_SEEDS}")
+        if failed_count > 0:
+            print(f"Failed runs: {failed_count}")
         
-        avg_improvement = df_results['% Improvement'].mean()
-        std_improvement = df_results['% Improvement'].std()
-        min_improvement = df_results['% Improvement'].min()
-        max_improvement = df_results['% Improvement'].max()
-        avg_time = df_results['Execution Time (s)'].mean()
-        total_time = df_results['Execution Time (s)'].sum()
+        print(f"\nAverage % Improvement: {df_results['% Improvement'].mean():.2f}%")
+        print(f"Std Dev % Improvement: {df_results['% Improvement'].std():.2f}%")
+        print(f"Min % Improvement: {df_results['% Improvement'].min():.2f}%")
+        print(f"Max % Improvement: {df_results['% Improvement'].max():.2f}%")
         
-        stats_msg = f"""Average % Improvement: {avg_improvement:.2f}%
-Std Dev % Improvement: {std_improvement:.2f}%
-Min % Improvement: {min_improvement:.2f}%
-Max % Improvement: {max_improvement:.2f}%
-
-Average Execution Time: {avg_time:.1f} seconds
-Total Execution Time: {total_time:.1f} seconds"""
-        log_message(stats_msg, f)
+        print(f"\nAverage Execution Time per Seed: {df_results['Execution Time (s)'].mean():.1f} seconds")
+        print(f"Total Sequential Time (sum): {df_results['Execution Time (s)'].sum():.1f} seconds")
+        print(f"Actual Parallel Time (wall clock): {overall_time:.1f} seconds")
+        speedup = df_results['Execution Time (s)'].sum() / overall_time if overall_time > 0 else 0
+        print(f"Speedup factor: {speedup:.2f}x")
         
         # Save to Excel
         output_path = os.path.join(_SCRIPT_DIR, "multi_seed_results_large.xlsx")
         df_results.to_excel(output_path, index=False)
-        save_msg = f"\nResults saved to: {output_path}"
-        log_message(save_msg, f)
+        print(f"\nResults saved to: {output_path}")
     else:
-        no_results_msg = "\nNo successful runs to summarize."
-        log_message(no_results_msg, f)
+        print("\nNo successful runs to summarize.")
     
-    completion_msg = f"""
-{'='*80}
-MULTI-SEED SIMULATION COMPLETE - LARGE SCALE
-Completed at: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
-Log saved to: {log_file}
-{'='*80}"""
-    log_message(completion_msg, f)
+    print("\n" + "="*80)
+    print("MULTI-SEED SIMULATION COMPLETE - LARGE SCALE")
+    print("="*80)
 
-print("\n" + "="*80)
-print("MULTI-SEED SIMULATION COMPLETE - LARGE SCALE")
-print("="*80)
+
+if __name__ == "__main__":
+    # Required guard for Windows multiprocessing
+    main()

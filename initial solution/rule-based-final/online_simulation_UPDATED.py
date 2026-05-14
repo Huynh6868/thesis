@@ -1,13 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Online Simulation with Urgent-Triggered Rescheduling
-
-This module orchestrates GA optimization triggered by each urgent case arrival.
-- Each urgent arrival sets frozen_time = arrival time
-- Cases with scheduled_start < frozen_time are locked
-- GA optimizes only the remaining modifiable elective cases
-"""
-
 from __future__ import annotations
 
 import random

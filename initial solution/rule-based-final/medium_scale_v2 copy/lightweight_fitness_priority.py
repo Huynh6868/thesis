@@ -318,8 +318,9 @@ def simulate_elective_plan_with_urgent(
                     if not set(surgeons_needed).issubset(free_surgeons):
                         continue
 
-                    # Must finish within admin hours same day
-                    if time_in_day + e.duration > sim.ADMIN_SHIFT_END:
+                    # Must finish within admin hours same day (room must be released before admin end)
+                    # Rest time is NOT checked because it's cooldown for NEXT surgery, not mandatory recovery
+                    if time_in_day + e.duration + e.prep_time > sim.ADMIN_SHIFT_END:
                         e.status = "delayed"
                         e.delayed_weeks += 1
                         continue
@@ -396,7 +397,10 @@ def simulate_elective_plan_with_urgent(
     # Elective metrics
     elective_recs = [r for r in log if r["type"] == "ELECTIVE"]
     elective_delay_total = sum(max(0.0, float(r["wait"])) for r in elective_recs)
-    delayed_next_week = sum(1 for e in elective_cases.values() if e.delayed_weeks >= 1)
+    # Count cases that actually started in week 2+ (not rejection count)
+    week_length = sim.WEEK_LENGTH
+    delayed_next_week = sum(1 for e in elective_cases.values() 
+                           if e.actual_start is not None and e.actual_start >= week_length)
 
     # Overtime/unproductive
     duty_map = {s: work.duty_intervals_abs(s, time_limit) for s in surgeons}

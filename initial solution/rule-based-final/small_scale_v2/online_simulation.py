@@ -206,7 +206,7 @@ if __name__ == "__main__":
                        default=os.path.join(_SCRIPT_DIR, "Cap_Rank.xlsx"))
     parser.add_argument("--scenario_seed", type=int, default=1)
     parser.add_argument("--mean_interarrival", type=float, default=2520)
-    parser.add_argument("--ga_gens", type=int, default=20)
+    parser.add_argument("--ga_gens", type=int, default=10)
     parser.add_argument("--ga_pop", type=int, default=30)
     parser.add_argument("--rest_time", type=int, default=15)
     parser.add_argument("--seed_ga", type=int, default=42)

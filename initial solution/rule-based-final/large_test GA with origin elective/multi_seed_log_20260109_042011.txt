@@ -1,0 +1,178 @@
+
+================================================================================
+MULTI-SEED SIMULATION LOG - LARGE SCALE
+Started at: 2026-01-09 04:20:12
+================================================================================
+Configuration:
+  - Number of Seeds: 10
+  - GA Generations: 10
+  - GA Population: 30
+  - Mean Interarrival: 112.0 minutes
+  - Log File: c:\Users\ASUS\OneDrive\nam 4\THESIS\code - Copy\initial solution\rule-based-final\large_scale_v2 copy\multi_seed_log_20260109_042011.txt
+================================================================================
+
+
+================================================================================
+SEED 1/10
+================================================================================
+
+Seed 1 completed in 857.5 seconds
+  Urgent Count: 87
+  Baseline: 767624.8
+  GA: 513380.1
+  Improvement: 254244.7 (33.12%)
+  Status: SUCCESS
+
+Results saved to Excel: c:\Users\ASUS\OneDrive\nam 4\THESIS\code - Copy\initial solution\rule-based-final\large_scale_v2 copy\multi_seed_results_large.xlsx
+
+================================================================================
+SEED 2/10
+================================================================================
+
+Seed 2 completed in 869.8 seconds
+  Urgent Count: 74
+  Baseline: 621321.6
+  GA: 450276.0
+  Improvement: 171045.6 (27.53%)
+  Status: SUCCESS
+
+Results saved to Excel: c:\Users\ASUS\OneDrive\nam 4\THESIS\code - Copy\initial solution\rule-based-final\large_scale_v2 copy\multi_seed_results_large.xlsx
+
+================================================================================
+SEED 3/10
+================================================================================
+
+Seed 3 completed in 1033.8 seconds
+  Urgent Count: 95
+  Baseline: 762277.8
+  GA: 539084.2
+  Improvement: 223193.6 (29.28%)
+  Status: SUCCESS
+
+Results saved to Excel: c:\Users\ASUS\OneDrive\nam 4\THESIS\code - Copy\initial solution\rule-based-final\large_scale_v2 copy\multi_seed_results_large.xlsx
+
+================================================================================
+SEED 4/10
+================================================================================
+
+Seed 4 completed in 1010.6 seconds
+  Urgent Count: 96
+  Baseline: 935406.7
+  GA: 694573.1
+  Improvement: 240833.6 (25.75%)
+  Status: SUCCESS
+
+Results saved to Excel: c:\Users\ASUS\OneDrive\nam 4\THESIS\code - Copy\initial solution\rule-based-final\large_scale_v2 copy\multi_seed_results_large.xlsx
+
+================================================================================
+SEED 5/10
+================================================================================
+
+Seed 5 completed in 607.1 seconds
+  Urgent Count: 77
+  Baseline: 583057.0
+  GA: 342642.1
+  Improvement: 240414.9 (41.23%)
+  Status: SUCCESS
+
+Results saved to Excel: c:\Users\ASUS\OneDrive\nam 4\THESIS\code - Copy\initial solution\rule-based-final\large_scale_v2 copy\multi_seed_results_large.xlsx
+
+================================================================================
+SEED 6/10
+================================================================================
+
+Seed 6 completed in 797.8 seconds
+  Urgent Count: 90
+  Baseline: 558917.3
+  GA: 365683.1
+  Improvement: 193234.2 (34.57%)
+  Status: SUCCESS
+
+Results saved to Excel: c:\Users\ASUS\OneDrive\nam 4\THESIS\code - Copy\initial solution\rule-based-final\large_scale_v2 copy\multi_seed_results_large.xlsx
+
+================================================================================
+SEED 7/10
+================================================================================
+
+Seed 7 completed in 874.3 seconds
+  Urgent Count: 103
+  Baseline: 726230.6
+  GA: 506057.4
+  Improvement: 220173.2 (30.32%)
+  Status: SUCCESS
+
+Results saved to Excel: c:\Users\ASUS\OneDrive\nam 4\THESIS\code - Copy\initial solution\rule-based-final\large_scale_v2 copy\multi_seed_results_large.xlsx
+
+================================================================================
+SEED 8/10
+================================================================================
+
+Seed 8 completed in 1055.4 seconds
+  Urgent Count: 108
+  Baseline: 895021.3
+  GA: 633362.4
+  Improvement: 261658.9 (29.23%)
+  Status: SUCCESS
+
+Results saved to Excel: c:\Users\ASUS\OneDrive\nam 4\THESIS\code - Copy\initial solution\rule-based-final\large_scale_v2 copy\multi_seed_results_large.xlsx
+
+================================================================================
+SEED 9/10
+================================================================================
+
+Seed 9 completed in 934.2 seconds
+  Urgent Count: 88
+  Baseline: 892936.8
+  GA: 688996.0
+  Improvement: 203940.8 (22.84%)
+  Status: SUCCESS
+
+Results saved to Excel: c:\Users\ASUS\OneDrive\nam 4\THESIS\code - Copy\initial solution\rule-based-final\large_scale_v2 copy\multi_seed_results_large.xlsx
+
+================================================================================
+SEED 10/10
+================================================================================
+
+Seed 10 completed in 702.1 seconds
+  Urgent Count: 87
+  Baseline: 630185.0
+  GA: 388909.2
+  Improvement: 241275.8 (38.29%)
+  Status: SUCCESS
+
+Results saved to Excel: c:\Users\ASUS\OneDrive\nam 4\THESIS\code - Copy\initial solution\rule-based-final\large_scale_v2 copy\multi_seed_results_large.xlsx
+
+================================================================================
+SUMMARY OF ALL SEEDS - LARGE SCALE
+================================================================================
+
+ Seed  Urgent Count  Baseline Objective  GA Improved Objective  Improvement  % Improvement  Execution Time (s)
+    1            87       767624.847145          513380.147145     254244.7      33.120958          857.495574
+    2            74       621321.558008          450275.958008     171045.6      27.529320          869.770766
+    3            95       762277.804360          539084.204360     223193.6      29.279824         1033.835915
+    4            96       935406.695361          694573.095361     240833.6      25.746405         1010.649248
+    5            77       583057.009187          342642.109187     240414.9      41.233515          607.082311
+    6            90       558917.332766          365683.132766     193234.2      34.572948          797.778335
+    7           103       726230.572052          506057.372052     220173.2      30.317259          874.327312
+    8           108       895021.288616          633362.388616     261658.9      29.234936         1055.352463
+    9            88       892936.796786          688995.996786     203940.8      22.839332          934.199433
+   10            87       630185.023574          388909.223574     241275.8      38.286502          702.061428
+
+================================================================================
+STATISTICS ACROSS ALL SEEDS
+================================================================================
+Average % Improvement: 31.22%
+Std Dev % Improvement: 5.65%
+Min % Improvement: 22.84%
+Max % Improvement: 41.23%
+
+Average Execution Time: 874.3 seconds
+Total Execution Time: 8742.6 seconds
+
+Results saved to: c:\Users\ASUS\OneDrive\nam 4\THESIS\code - Copy\initial solution\rule-based-final\large_scale_v2 copy\multi_seed_results_large.xlsx
+
+================================================================================
+MULTI-SEED SIMULATION COMPLETE - LARGE SCALE
+Completed at: 2026-01-09 06:45:55
+Log saved to: c:\Users\ASUS\OneDrive\nam 4\THESIS\code - Copy\initial solution\rule-based-final\large_scale_v2 copy\multi_seed_log_20260109_042011.txt
+================================================================================
